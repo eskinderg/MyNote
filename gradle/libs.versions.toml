@@ -11,7 +11,7 @@ constraintlayout = "2.1.4"
 lifecycleLivedataKtx = "2.8.4"
 lifecycleViewmodelKtx = "2.8.4"
 navigationFragment = "2.7.7"
-navigationUi = "2.7.7"
+navigationUi = "2.8.3"
 retrofit = "2.9.0"
 swiperefreshlayout = "1.1.0"
 
