@@ -27,13 +27,15 @@ import mynote.R;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecyclerViewHolder> {
 
     private final OnNoteItemClickListener mListener;
+    private final OnNoteItemLongClickListener onNoteItemLongClickListener;
     public ArrayList<Note> notesList;
     Context context;
 
-    public NotesAdapter(Context context, List<Note> notesList, OnNoteItemClickListener listener) {
+    public NotesAdapter(Context context, List<Note> notesList, OnNoteItemClickListener listener, OnNoteItemLongClickListener onNoteItemLongClickListener) {
         this.context = context;
         this.notesList = getActiveNotes(notesList);
         this.mListener = listener;
+        this.onNoteItemLongClickListener = onNoteItemLongClickListener;
     }
 
     @NonNull
@@ -83,6 +85,19 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
             }
         });
 
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onNoteItemLongClickListener.onNoteItemLongClick(v, noteItem);
+                return false;
+            }
+        });
+
+//        holder.itemView.setOnLongClickListener(view -> {
+//            holder.itemView.showContextMenu();
+//            return true;
+//        });
+
     }
 
     @Override
@@ -123,6 +138,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
 
     public interface OnNoteItemClickListener {
         void onNoteItemClick(View view, Note note);
+    }
+
+    public interface OnNoteItemLongClickListener {
+        void onNoteItemLongClick(View view, Note note);
     }
 
     public static class NoteRecyclerViewHolder extends RecyclerView.ViewHolder {

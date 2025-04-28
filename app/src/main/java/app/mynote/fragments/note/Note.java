@@ -26,21 +26,7 @@ public class Note implements Serializable {
     @Expose
     private String colour;
 
-    @SerializedName("height")
-    @Expose
-    private Number height;
 
-    @SerializedName("width")
-    @Expose
-    private Number width;
-
-    @SerializedName("left")
-    @Expose
-    private Number left;
-
-    @SerializedName("top")
-    @Expose
-    private Number top;
 
     @SerializedName("selection")
     @Expose

@@ -10,7 +10,7 @@ public class UserManager {
         String email = context.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("email", null);
         String givenName = context.getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("given_name", null);
 
-        if(id == null || email == null || givenName == null)
+        if(id == null || givenName == null)
             return null;
 
         user.setId(id);

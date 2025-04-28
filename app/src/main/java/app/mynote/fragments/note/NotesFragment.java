@@ -5,9 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.ActionMode;
+import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +45,7 @@ import app.mynote.fragments.note.NotesAdapter.OnNoteItemClickListener;
 import mynote.R;
 import mynote.databinding.FragmentNotesBinding;
 
-public class NotesFragment extends Fragment implements OnNoteItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class NotesFragment extends Fragment implements OnNoteItemClickListener, NotesAdapter.OnNoteItemLongClickListener, SwipeRefreshLayout.OnRefreshListener, ActionMode.Callback {
 
     public RecyclerView recyclerView;
     public FloatingActionButton fab;
@@ -47,8 +53,15 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
     public SwipeRefreshLayout mSwipeRefreshLayout;
     private FragmentNotesBinding binding;
     private NoteObserver noteObserver;
+    private ActionMode actionMode;
 
     public NotesFragment() {
+    }
+
+      private void startActionMode() {
+        if (actionMode == null) {
+            actionMode = getActivity().startActionMode(this);
+        }
     }
 
     @Override
@@ -63,7 +76,7 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
         this.recyclerView = view.findViewById(R.id.noterecyclerview);
         ArrayList<Note> notes = new ArrayList<>(NoteService.getAllNotes(getContext()));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        this.notesAdapter = new NotesAdapter(getContext(),notes, this);
+        this.notesAdapter = new NotesAdapter(getContext(),notes, this, this);
         this.recyclerView.setAdapter(this.notesAdapter);
         this.notesAdapter.registerAdapterDataObserver(new AdapterDataObserver() {
             @Override
@@ -78,6 +91,7 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
                 setAppbarCount();
             }
         });
+        registerForContextMenu(recyclerView);
         return view;
     }
 
@@ -157,6 +171,34 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
     }
 
     @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+//         getActivity().getMenuInflater().inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == R.id.action_context_pin){
+            Toast.makeText(getContext(),"Pin toggle clicked", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        if(item.getItemId() == R.id.action_context_archive){
+            Toast.makeText(getContext(),"Archived clicked", Toast.LENGTH_LONG).show();
+            return true;
+        }
+         // Handle the selected item from the context menu
+//        switch (item.getItemId()) {
+            // Handle different menu item selections
+//            case R.id.action:
+                // Perform delete action
+//                return true;
+            // Handle other actions
+//        }
+        return false;
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
@@ -207,12 +249,53 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
 
 
     private void dataView(List<Note> notes) {
-        this.notesAdapter = new NotesAdapter(getContext(), notes, this);
+        this.notesAdapter = new NotesAdapter(getContext(), notes, this, this);
         recyclerView.setAdapter(this.notesAdapter);
     }
 
     private void setAppbarCount() {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Notes " + "(" + NotesFragment.this.recyclerView.getAdapter().getItemCount() + ")");
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+
+    }
+
+    @Override
+    public void onNoteItemLongClick(View view, Note note) {
+        PopupMenu popupMenu = new PopupMenu(getContext(),view, Gravity.END);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.action_context_archive) {
+                    Toast.makeText(getContext(), note.getHeader(), Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                if(item.getItemId() == R.id.action_context_pin) {
+                    Toast.makeText(getContext(), note.getHeader(), Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.inflate(R.menu.context_menu);
+        popupMenu.show();
     }
 
     private final class NoteObserver extends ContentObserver {
