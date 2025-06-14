@@ -175,17 +175,18 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
                                     for (Note note : response) {
 
-                                        responseBatch.add(ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI) // delete notes that are not active locally
-                                                .withSelection(NoteContract.Notes.COL_ID + "='" + note.getId() + "'", null)
-                                                .build());
+//                                        responseBatch.add(ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI) //
+//                                                .withSelection(NoteContract.Notes.COL_ID + "='" + note.getId() + "'", null)
+//                                                .build());
 //                                        responseBatch.add(ContentProviderOperation.newDelete(NoteContract.BASE_CONTENT_URI).withSelection(NoteContract.Notes.COL_ID + "=", ) .build());
-//                                        addOperation(responseBatch, ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI), note);
+                                        addOperation(responseBatch, ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI), note);
                                     }
 
                                     resolver.applyBatch(NoteContract.CONTENT_AUTHORITY, responseBatch);
+                                    resolver.notifyChange(NoteContract.Notes.CONTENT_URI, null);
 //                                    resolver.notifyChange(NoteContract.Notes.CONTENT_URI, // URI where data was modified
 //                                            null, // No local observer
-//                                            ContentResolver.NOTIFY_DELETE); // IMPORTANT: Do not sync to network
+//                                            ContentResolver.NOTIFY_INSERT); // IMPORTANT: Do not sync to network
                                 }catch (Exception e) {
                                     Log.e(TAG, response.toString() );
                                 }
