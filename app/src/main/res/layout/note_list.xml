@@ -36,6 +36,18 @@
             android:textColor="@color/textColor"
             tools:text="Description" />
 
+
+        <ImageView
+            android:id="@+id/sync"
+            android:layout_width="13dp"
+            android:layout_height="12dp"
+            android:src="@drawable/ic_check"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintLeft_toRightOf="@id/description"
+            android:layout_marginLeft="3dp"
+            app:layout_constraintVertical_bias="1.0"
+            app:tint="@color/green" />
+
         <ImageView
             android:id="@+id/imgPinned"
             android:src="@drawable/ic_push_pin_24"

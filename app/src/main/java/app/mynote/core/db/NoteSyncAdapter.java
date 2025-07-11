@@ -170,7 +170,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                             public void onResponse(Note[] response) {
 
                                 try {
-//resolver.applyBatch(NoteContract.CONTENT_AUTHORITY, ops);
+                                    //resolver.applyBatch(NoteContract.CONTENT_AUTHORITY, ops);
                                     ArrayList<ContentProviderOperation> responseBatch = new ArrayList<>();
 
                                     for (Note note : response) {
@@ -179,7 +179,8 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 //                                                .withSelection(NoteContract.Notes.COL_ID + "='" + note.getId() + "'", null)
 //                                                .build());
 //                                        responseBatch.add(ContentProviderOperation.newDelete(NoteContract.BASE_CONTENT_URI).withSelection(NoteContract.Notes.COL_ID + "=", ) .build());
-                                        addOperation(responseBatch, ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI), note);
+//                                        addOperation(responseBatch, ContentProviderOperation.newDelete(NoteContract.Notes.CONTENT_URI), note);
+                                        addOperation(responseBatch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), note);
                                     }
 
                                     resolver.applyBatch(NoteContract.CONTENT_AUTHORITY, responseBatch);
@@ -222,6 +223,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                                     .withValue(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString())
                                     .withValue(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString())
                                     .withValue(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync())
+                                    .withValue(NoteContract.Notes.COL_SYNCED, note.getIsSync())
                                     .withValue(NoteContract.Notes.COL_OWNER, note.getOwner())
                                     .build());
                             syncResult.stats.numInserts++;
@@ -239,6 +241,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                                     ArrayList<ContentProviderOperation> responseBatch = new ArrayList<>();
 
                                     for (Note note : response) {
+//                                        note.setIsSync(true);
                                         addOperation(responseBatch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), note);
                                     }
 
@@ -286,8 +289,9 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
             if (localNote.getDateArchived() != null && remoteNote.getDateArchived() != null) {
                 int comp = localNote.getDateArchived().compareTo(remoteNote.getDateArchived());
 
-                if (comp < 0)
+                if (comp < 0){
                     addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+                }
 
                 if (comp > 0)
                     localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
@@ -297,8 +301,9 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                 localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
 
 
-            if (localNote.getDateArchived() == null && remoteNote.getDateArchived() != null)
+            if (localNote.getDateArchived() == null && remoteNote.getDateArchived() != null) {
                 addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+            }
         }
     }
 
@@ -308,8 +313,9 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 int comp = localNote.getPinOrder().compareTo(remoteNote.getPinOrder());
 
-                if (comp < 0)
+                if (comp < 0){
                     addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+                }
 
                 if (comp > 0)
                     localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
@@ -341,6 +347,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                 .withValue(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString())
                 .withValue(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString())
                 .withValue(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync())
+                .withValue(NoteContract.Notes.COL_SYNCED, note.getIsSync())
                 .withValue(NoteContract.Notes.COL_OWNER, note.getOwner())
                 .build());
     }

@@ -1,6 +1,7 @@
 package app.mynote.fragments.note.pinned;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,7 +35,7 @@ import mynote.R;
 public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
 
     Note note;
-    public EditText txtNoteText;
+    public WebView webView;
     public EditText txtNoteHeader;
 
 
@@ -57,7 +60,7 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
 
         getActivity().addMenuProvider(this, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
 
-        this.txtNoteText = view.findViewById(R.id.txtNoteText);
+        this.webView = view.findViewById(R.id.webViewNoteText);
         this.txtNoteHeader = view.findViewById(R.id.txtNoteHeader);
 
         if (this.note.getHeader() != null) {
@@ -65,7 +68,13 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
         }
 
         if (this.note.getText() != null) {
-            PinnedNoteEditFragment.this.txtNoteText.setText(Html.fromHtml(this.note.getText(), Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV).toString());
+//            PinnedNoteEditFragment.this.txtNoteText.setText(Html.fromHtml(this.note.getText(), Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV).toString());
+
+            String htmlEditor = "<html><body contenteditable='true' style='padding:10px; color:#000; background:#fff;'>" +
+                    note.getText() +
+                    "</body></html>";
+            this.webView.getSettings().setJavaScriptEnabled(true);
+            this.webView.loadDataWithBaseURL(null, htmlEditor, "text/html", "UTF-8", null);
         }
 
         this.txtNoteHeader.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteHeader) {
@@ -78,20 +87,56 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
             }
         });
 
-        this.txtNoteText.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteText) {
+//        this.txtNoteText.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteText) {
+//            @Override
+//            public void onTextChanged(EditText target, Editable s) {
+//                String body = txtNoteText.getText().toString().isEmpty() ? "" : Html.toHtml(txtNoteText.getText(), Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV);
+//                note.setText(body);
+//                NoteService.update(getContext(), note, true);
+//            }
+//        });
+
+        webView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onTextChanged(EditText target, Editable s) {
-                String body = txtNoteText.getText().toString().isEmpty() ? "" : Html.toHtml(txtNoteText.getText(), Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV);
-                note.setText(body);
-                NoteService.update(getContext(), note, true);
+            public void onPageFinished(WebView view, String url) {
+                htmlSyncHandler.post(syncNoteRunnable);
             }
         });
-
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(this.note.getHeader());
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
     }
 
+    private final Handler htmlSyncHandler = new Handler();
+    private final int syncIntervalMs = 2000; // every 2 seconds
+
+    private final Runnable syncNoteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            webView.evaluateJavascript(
+                    "(function() { return document.body.innerHTML; })();",
+                    html -> {
+                        // Clean up the returned HTML string (remove quotes and escape characters)
+                        String cleanedHtml = html
+                                .replaceAll("^\"|\"$", "") // Remove surrounding quotes
+                                .replaceAll("\\\\n", "\n")
+                                .replaceAll("\\\\\"", "\"");
+
+                        if (!cleanedHtml.equals(note.getText())) {
+                            note.setText(cleanedHtml);
+                            NoteService.update(getContext(), note, true);
+                        }
+                    }
+            );
+            htmlSyncHandler.postDelayed(this, syncIntervalMs);
+        }
+    };
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        htmlSyncHandler.removeCallbacks(syncNoteRunnable);
+    }
     @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.note, menu);

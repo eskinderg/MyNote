@@ -31,6 +31,7 @@ public class NoteService {
         values.put(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString());
         values.put(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString());
         values.put(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync());
+        values.put(NoteContract.Notes.COL_SYNCED, note.getIsSync());
         values.put(NoteContract.Notes.COL_OWNER, note.getOwner());
         c.getContentResolver().insert(NoteContract.Notes.CONTENT_URI, values);
         return note;
@@ -51,6 +52,7 @@ public class NoteService {
         values.put(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString());
         if(markModified){
             values.put(NoteContract.Notes.COL_DATE_MODIFIED, AppDate.Now());
+            values.put(NoteContract.Notes.COL_SYNCED, false);
         }else{
             values.put(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString());
         }
@@ -98,6 +100,7 @@ public class NoteService {
         note.setDateModified(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_MODIFIED))));
         note.setDateArchived(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_ARCHIVED))));
         note.setDateSync(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_SYNC)));
+        note.setIsSync(c.getInt(c.getColumnIndexOrThrow(NoteContract.Notes.COL_SYNCED)) > 0);
         note.setOwner(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_OWNER)));
         return note;
     }
@@ -130,6 +133,7 @@ public class NoteService {
             values.put(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString());
             values.put(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString());
             values.put(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync());
+            values.put(NoteContract.Notes.COL_SYNCED, note.getIsSync());
             values.put(NoteContract.Notes.COL_OWNER, note.getOwner());
             update(c, note, true);
         }

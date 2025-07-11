@@ -86,6 +86,16 @@ public class Note implements Serializable {
         this.dateArchived = AppTimestamp.convertStringToTimestamp(AppDate.Now());
     }
 
+    private boolean sync = true;
+
+    public boolean getIsSync() {
+        return sync;
+    }
+
+    public void setIsSync(boolean value){
+        this.sync = value;
+    }
+
     public String getDateSync() {
         return dateSync;
     }
@@ -135,7 +145,7 @@ public class Note implements Serializable {
     }
 
     public String getText() {
-        return text;
+        return text==null ? "" : text;
     }
 
     public void setText(String text) {

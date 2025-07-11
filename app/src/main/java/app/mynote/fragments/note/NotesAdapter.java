@@ -1,5 +1,7 @@
 package app.mynote.fragments.note;
 
+import static app.mynote.core.MyNote.getContext;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -76,6 +78,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
             holder.header.setText(noteItem.getHeader());
         }
 
+        // Mark note as unsynced
+        if(!noteItem.getIsSync()) {
+            holder.sync.setImageResource(R.drawable.ic_sync);
+            holder.sync.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary_light));
+        }
+
         holder.description.setText("Modified " + Time2Ago.covertTimeToText(noteItem.getDateModified().toString()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +157,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
         TextView header;
         TextView description;
         ImageView imgPinned;
+        ImageView sync;
         CardView card;
 
         public NoteRecyclerViewHolder(@NonNull View itemView) {
@@ -157,6 +166,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
             description = itemView.findViewById(R.id.description);
             card = itemView.findViewById(R.id.card);
             imgPinned = itemView.findViewById(R.id.imgPinned);
+            sync = itemView.findViewById(R.id.sync);
         }
     }
 }

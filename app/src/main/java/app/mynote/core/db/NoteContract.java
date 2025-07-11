@@ -30,6 +30,7 @@ public final class NoteContract {
         public static final String COL_DATE_MODIFIED = "dateModified";
         public static final String COL_DATE_ARCHIVED = "dateArchived";
         public static final String COL_DATE_SYNC = "dateSync";
+        public static final String COL_SYNCED = "synced";
         public static final String COL_OWNER = "owner";
 
 

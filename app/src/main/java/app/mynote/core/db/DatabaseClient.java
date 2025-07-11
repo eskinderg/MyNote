@@ -76,6 +76,7 @@ public final class DatabaseClient extends SQLiteOpenHelper {
                 NoteContract.Notes.COL_DATE_MODIFIED + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_ARCHIVED + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_SYNC + "] TEXT,[" +
+                NoteContract.Notes.COL_SYNCED + "] TINYINT,[" +
                 NoteContract.Notes.COL_OWNER + "] TEXT);");
     }
 }
