@@ -77,7 +77,7 @@ public class NoteFragment extends Fragment implements IAppCallback<Note>, MenuPr
         if(note.getText() != null) {
             html = note.getText();
         }
-        String htmlEditor = "<html><body contenteditable='true'>" +
+        String htmlEditor = "<html><body contenteditable='true' style='padding:5px; border-top:1px solid lightgray;'>" +
                 html +
                 "</body></html>";
         NoteFragment.this.webView.getSettings().setJavaScriptEnabled(true);
