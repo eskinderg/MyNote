@@ -24,6 +24,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import org.json.JSONObject;
+
 import app.mynote.core.utils.AppDate;
 import app.mynote.core.utils.AppTimestamp;
 import app.mynote.core.utils.GsonParser;
@@ -67,15 +69,17 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
             txtNoteHeader.setText(this.note.getHeader());
         }
 
-        if (this.note.getText() != null) {
-//            PinnedNoteEditFragment.this.txtNoteText.setText(Html.fromHtml(this.note.getText(), Html.FROM_HTML_SEPARATOR_LINE_BREAK_DIV).toString());
-
-            String htmlEditor = "<html><body contenteditable='true' style='padding:10px; color:#000; background:#fff;'>" +
-                    note.getText() +
-                    "</body></html>";
-            this.webView.getSettings().setJavaScriptEnabled(true);
-            this.webView.loadDataWithBaseURL(null, htmlEditor, "text/html", "UTF-8", null);
+        String html = "";
+        if(note.getText() != null) {
+            html = note.getText();
         }
+        String htmlEditor = "<html><body contenteditable='true' style='padding:5px; padding-top:10px; border-top:1px solid lightgray;'>" +
+                html +
+                "</body></html>";
+        PinnedNoteEditFragment.this.webView.getSettings().setJavaScriptEnabled(true);
+        PinnedNoteEditFragment.this.webView.loadDataWithBaseURL(null, htmlEditor, "text/html", "UTF-8", null);
+
+
 
         this.txtNoteHeader.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteHeader) {
             @Override
@@ -116,13 +120,10 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
             webView.evaluateJavascript(
                     "(function() { return document.body.innerHTML; })();",
                     html -> {
-                        // Clean up the returned HTML string (remove quotes and escape characters)
-                        String cleanedHtml = html
-                                .replaceAll("^\"|\"$", "") // Remove surrounding quotes
-                                .replaceAll("\\\\n", "\n")
-                                .replaceAll("\\\\\"", "\"");
+                        String cleanedHtml = decodeHtmlFromWebView(html);
 
-                        if (!cleanedHtml.equals(note.getText())) {
+                        // If you want to save it as raw HTML (not just plain text):
+                        if(!note.getText().equals(cleanedHtml)) {
                             note.setText(cleanedHtml);
                             NoteService.update(getContext(), note, true);
                         }
@@ -132,11 +133,24 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
         }
     };
 
+    private String decodeHtmlFromWebView(String html) {
+        if (html == null) return "";
+
+        try {
+            // The string returned is a JSON string, so wrap it in a dummy JSON object to decode
+            return new JSONObject("{\"html\":" + html + "}").getString("html");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         htmlSyncHandler.removeCallbacks(syncNoteRunnable);
     }
+
     @Override
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.note, menu);
@@ -159,19 +173,39 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
 //        }
 
         if (menuItem.getItemId() == 16908332) {
-            NavController navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.action_nav_pin_edit_nav_pin);
+            saveHtmlThen(()-> {
+                NavController navController = NavHostFragment.findNavController(this);
+                navController.navigate(R.id.action_nav_pin_edit_nav_pin);
+            });
             return true;
         }
 
         if(menuItem.getItemId() == R.id.action_archive){
-            this.note.setArchived(true);
-            this.note.setDateArchived(AppTimestamp.convertStringToTimestamp(AppDate.Now()));
-            NoteService.update(getContext(), note, false);
-            NavController navController = NavHostFragment.findNavController(this);
-            navController.navigate(R.id.action_nav_pin_edit_nav_pin);
+            saveHtmlThen(()-> {
+                this.note.setArchived(true);
+                this.note.setDateArchived(AppTimestamp.convertStringToTimestamp(AppDate.Now()));
+                NoteService.update(getContext(), note, false);
+                NavController navController = NavHostFragment.findNavController(this);
+                navController.navigate(R.id.action_nav_pin_edit_nav_pin);
+            });
             return true;
         }
         return false;
+    }
+
+    private void saveHtmlThen(Runnable afterSave) {
+        webView.evaluateJavascript(
+                "(function() { return document.body.innerHTML; })();",
+                html -> {
+                    String cleanedHtml = decodeHtmlFromWebView(html);
+
+                    // If you want to save it as raw HTML (not just plain text):
+                    if(!note.getText().equals(cleanedHtml)) {
+                        note.setText(cleanedHtml);
+                        NoteService.update(getContext(), note, true);
+                    }
+                    if (afterSave != null) afterSave.run();
+                }
+        );
     }
 }

@@ -1,5 +1,7 @@
 package app.mynote.fragments.note.pinned;
 
+import static app.mynote.core.MyNote.getContext;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -70,6 +73,12 @@ public class PinNotesAdapter extends RecyclerView.Adapter<PinNotesAdapter.PinNot
             holder.header.setText(noteItem.getHeader());
         }
 
+        // Mark note as unsynced
+        if(!noteItem.getIsSync()) {
+            holder.sync.setImageResource(R.drawable.ic_sync);
+            holder.sync.setColorFilter(ContextCompat.getColor(getContext(), R.color.primary_light));
+        }
+
         holder.description.setText("Modified " + Time2Ago.covertTimeToText(noteItem.getDateModified().toString()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +115,7 @@ public class PinNotesAdapter extends RecyclerView.Adapter<PinNotesAdapter.PinNot
         TextView header;
         TextView description;
         CardView card;
+        ImageView sync;
         ImageView imgPinned;
 
         public PinNoteRecyclerViewHolder(@NonNull View itemView) {
@@ -114,6 +124,7 @@ public class PinNotesAdapter extends RecyclerView.Adapter<PinNotesAdapter.PinNot
             description = itemView.findViewById(R.id.description);
             card = itemView.findViewById(R.id.card);
             imgPinned = itemView.findViewById(R.id.imgPinned);
+            sync = itemView.findViewById(R.id.sync);
         }
     }
 }
