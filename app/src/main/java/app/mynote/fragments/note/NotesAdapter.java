@@ -81,7 +81,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
         // Mark note as unsynced
         if(!noteItem.getIsSync()) {
             holder.sync.setImageResource(R.drawable.ic_sync);
-            holder.sync.setColorFilter(ContextCompat.getColor(getContext(), R.color.green));
+//            holder.sync.setColorFilter(ContextCompat.getColor(getContext(), R.color.green));
         }
 
         holder.description.setText("Modified " + Time2Ago.covertTimeToText(noteItem.getDateModified().toString()));

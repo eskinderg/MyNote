@@ -42,10 +42,10 @@
             android:layout_width="13dp"
             android:layout_height="12dp"
             android:src="@drawable/ic_check"
-            app:layout_constraintTop_toBottomOf="@id/header"
+            app:layout_constraintTop_toTopOf="@id/description"
             app:layout_constraintLeft_toRightOf="@id/description"
             android:layout_marginLeft="3dp"
-            app:layout_constraintVertical_bias="1.0"
+            android:layout_marginTop="2dp"
             app:tint="@color/primary_light" />
 
         <ImageView
