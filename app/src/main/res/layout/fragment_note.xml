@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_margin="0dp"
+    android:padding="0dp"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     tools:context="app.mynote.fragments.note.NoteFragment">
@@ -17,9 +19,7 @@
         android:background="@color/backgroundColor"
         android:textColor="@color/textColor"
         android:hint="Untitled"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="10dp"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,13 +37,28 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/txtNoteHeader"-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        />-->
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_x="0dp"
+        android:layout_y="-1dp"
+        android:backgroundTint="@color/primary"
+        app:layout_constraintTop_toBottomOf="@+id/txtNoteHeader"
+        android:background="?android:attr/listDivider" />
+
     <WebView
         android:id="@+id/webViewNoteText"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="0dp"
+        android:padding="0dp"
         android:background="@color/backgroundColor"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNoteHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/divider" >
+
+    </WebView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

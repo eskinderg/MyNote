@@ -73,7 +73,7 @@ public class PinnedNoteEditFragment extends Fragment implements MenuProvider {
         if(note.getText() != null) {
             html = note.getText();
         }
-        String htmlEditor = "<html><body contenteditable='true' style='padding:5px; padding-top:10px; border-top:1px solid lightgray;'>" +
+        String htmlEditor = "<html><body contenteditable='true' style='padding:0px 5px 0px 5px;'>" +
                 html +
                 "</body></html>";
         PinnedNoteEditFragment.this.webView.getSettings().setJavaScriptEnabled(true);
