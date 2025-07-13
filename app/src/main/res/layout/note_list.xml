@@ -46,7 +46,7 @@
             app:layout_constraintLeft_toRightOf="@id/description"
             android:layout_marginLeft="3dp"
             app:layout_constraintVertical_bias="1.0"
-            app:tint="@color/green" />
+            app:tint="@color/primary_light" />
 
         <ImageView
             android:id="@+id/imgPinned"
