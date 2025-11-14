@@ -14,22 +14,23 @@ public final class NoteContract {
 
     public static abstract class Notes {
         public static final String NAME = "notes";
-        public static final String COL_ID = "id";
+        public static final String COL_ID = "note_id";
         public static final String COL_HEADER = "header";
         public static final String COL_TEXT = "text";
-        public static final String COL_USER_ID = "userId";
+        public static final String COL_USER_ID = "user_id";
         public static final String COL_COLOUR = "colour";
         public static final String COL_SELECTION = "selection";
         public static final String COL_ARCHIVED = "archived";
         public static final String COL_FAVORITE = "favorite";
         public static final String COL_PINNED = "pinned";
         public static final String COL_ACTIVE = "active";
-        public static final String COL_SPELL_CHECK = "spellCheck";
-        public static final String COL_PIN_ORDER = "pinOrder";
-        public static final String COL_DATE_CREATED = "dateCreated";
-        public static final String COL_DATE_MODIFIED = "dateModified";
-        public static final String COL_DATE_ARCHIVED = "dateArchived";
-        public static final String COL_DATE_SYNC = "dateSync";
+        public static final String COL_SPELL_CHECK = "spell_check";
+        public static final String COL_PIN_ORDER = "pin_order";
+        public static final String COL_DATE_CREATED = "date_created";
+        public static final String COL_DATE_MODIFIED = "date_modified";
+        public static final String COL_DATE_ARCHIVED = "date_archived";
+        public static final String COL_DATE_DELETED = "date_deleted";
+        public static final String COL_DATE_SYNC = "date_sync";
         public static final String COL_SYNCED = "synced";
         public static final String COL_OWNER = "owner";
 
@@ -57,6 +58,7 @@ public final class NoteContract {
             Notes.COL_DATE_CREATED,
             Notes.COL_DATE_MODIFIED,
             Notes.COL_DATE_ARCHIVED,
+            Notes.COL_DATE_DELETED,
             Notes.COL_DATE_SYNC,
             Notes.COL_OWNER
     };

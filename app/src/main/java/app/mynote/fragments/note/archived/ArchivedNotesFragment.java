@@ -93,6 +93,7 @@ public class ArchivedNotesFragment extends Fragment implements ArchivedNotesAdap
                             public void onClick(int position) {
                                 Note noteItem = notesAdapter.notesList.get(position);
                                 noteItem.setActive(false);
+                                noteItem.setDateDeleted(AppTimestamp.convertStringToTimestamp(AppDate.Now()));
                                 NoteService.update(getContext(), noteItem, true);
                                 Toast.makeText(getContext(), "Note deleted permanently", Toast.LENGTH_LONG).show();
                                 notesAdapter.notesList.remove(position);

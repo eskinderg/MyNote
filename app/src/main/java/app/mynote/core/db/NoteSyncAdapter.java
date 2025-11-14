@@ -137,6 +137,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
                         archives(localEntries, batch, noteLocal, found);
                         pinOrder(localEntries, batch, noteLocal, found);
+                        deleted(localEntries, batch, noteLocal, found);
 
                         if (!(found == null)) {
                             int des = found.getDateModified().compareTo(noteLocal.getDateModified());
@@ -326,6 +327,29 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (localNote.getPinOrder() == null && remoteNote.getPinOrder() != null)
                 addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+        }
+    }
+
+    private void deleted(Map<String, Note> localEntries, ArrayList<ContentProviderOperation> batch, Note localNote, Note remoteNote) {
+        if (remoteNote != null) {
+            if (localNote.getDateDeleted() != null && remoteNote.getDateDeleted() != null) {
+                int comp = localNote.getDateDeleted().compareTo(remoteNote.getDateDeleted());
+
+                if (comp < 0){
+                    addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+                }
+
+                if (comp > 0)
+                    localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
+            }
+
+            if (localNote.getDateDeleted() != null && remoteNote.getDateDeleted() == null)
+                localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
+
+
+            if (localNote.getDateDeleted() == null && remoteNote.getDateDeleted() != null) {
+                addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+            }
         }
     }
 

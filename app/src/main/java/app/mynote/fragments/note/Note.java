@@ -14,11 +14,11 @@ public class Note implements Serializable {
     @Expose
     private String header;
 
-    @SerializedName("id")
+    @SerializedName("note_id")
     @Expose
     private String id;
 
-    @SerializedName("userId")
+    @SerializedName("user_id")
     @Expose
     private String userId;
 
@@ -48,27 +48,31 @@ public class Note implements Serializable {
     @Expose
     private boolean active = true;
 
-    @SerializedName("spellCheck")
+    @SerializedName("spell_check")
     @Expose
     private boolean spellCheck;
 
-    @SerializedName("pinOrder")
+    @SerializedName("pin_order")
     @Expose
     private Timestamp pinOrder;
 
-    @SerializedName("dateCreated")
+    @SerializedName("date_created")
     @Expose
     private Timestamp dateCreated;
 
-    @SerializedName("dateModified")
+    @SerializedName("date_modified")
     @Expose
     private Timestamp dateModified;
 
-    @SerializedName("dateArchived")
+    @SerializedName("date_archived")
     @Expose
     private Timestamp dateArchived;
 
-    @SerializedName("dateSync")
+    @SerializedName("date_deleted")
+    @Expose
+    private Timestamp dateDeleted;
+
+    @SerializedName("date_sync")
     @Expose
     private String dateSync;
 
@@ -84,6 +88,7 @@ public class Note implements Serializable {
         this.pinOrder = AppTimestamp.convertStringToTimestamp(AppDate.Now());
         this.dateModified = AppTimestamp.convertStringToTimestamp(AppDate.Now());
         this.dateArchived = AppTimestamp.convertStringToTimestamp(AppDate.Now());
+        this.dateDeleted = AppTimestamp.convertStringToTimestamp(AppDate.Now());
     }
 
     private boolean sync = true;
@@ -124,8 +129,16 @@ public class Note implements Serializable {
         return this.dateArchived;
     }
 
+    public Timestamp getDateDeleted() {
+        return this.dateDeleted;
+    }
+
     public void setDateArchived(Timestamp dateArchived) {
         this.dateArchived = dateArchived;
+    }
+
+    public void setDateDeleted(Timestamp dateDeleted) {
+        this.dateDeleted = dateDeleted;
     }
 
     public String getUserId() {
