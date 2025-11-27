@@ -106,7 +106,7 @@ public class PinNoteListFragment extends Fragment implements SwipeRefreshLayout.
                             public void onClick(int position) {
                                 Note noteItem = pinAdapter.notesList.get(position);
                                 noteItem.setPinned(false);
-                                noteItem.setPinOrder(AppTimestamp.convertStringToTimestamp(AppDate.Now()));
+                                noteItem.setPinOrder(System.currentTimeMillis());
                                 NoteService.update(getContext(), noteItem, false);
                                 Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
                                 pinAdapter.notesList.remove(position);

@@ -27,7 +27,6 @@ public class Note implements Serializable {
     private String colour;
 
 
-
     @SerializedName("selection")
     @Expose
     private String selection;
@@ -54,7 +53,7 @@ public class Note implements Serializable {
 
     @SerializedName("pin_order")
     @Expose
-    private Timestamp pinOrder;
+    private Long pinOrder;
 
     @SerializedName("date_created")
     @Expose
@@ -72,6 +71,10 @@ public class Note implements Serializable {
     @Expose
     private Timestamp dateDeleted;
 
+    @SerializedName("last_modified_date")
+    @Expose
+    private Timestamp lastModifiedDate;
+
     @SerializedName("date_sync")
     @Expose
     private String dateSync;
@@ -83,21 +86,21 @@ public class Note implements Serializable {
     @SerializedName("text")
     @Expose
     private String text;
+    private boolean sync = true;
 
     public Note() {
-        this.pinOrder = AppTimestamp.convertStringToTimestamp(AppDate.Now());
+//        this.pinOrder = AppTimestamp.convertStringToTimestamp(AppDate.Now());
         this.dateModified = AppTimestamp.convertStringToTimestamp(AppDate.Now());
         this.dateArchived = AppTimestamp.convertStringToTimestamp(AppDate.Now());
         this.dateDeleted = AppTimestamp.convertStringToTimestamp(AppDate.Now());
+        this.lastModifiedDate = AppTimestamp.convertStringToTimestamp(AppDate.Now());
     }
-
-    private boolean sync = true;
 
     public boolean getIsSync() {
         return sync;
     }
 
-    public void setIsSync(boolean value){
+    public void setIsSync(boolean value) {
         this.sync = value;
     }
 
@@ -129,16 +132,24 @@ public class Note implements Serializable {
         return this.dateArchived;
     }
 
-    public Timestamp getDateDeleted() {
-        return this.dateDeleted;
-    }
-
     public void setDateArchived(Timestamp dateArchived) {
         this.dateArchived = dateArchived;
     }
 
+    public Timestamp getDateDeleted() {
+        return this.dateDeleted;
+    }
+
     public void setDateDeleted(Timestamp dateDeleted) {
         this.dateDeleted = dateDeleted;
+    }
+
+    public Timestamp getLastModifiedDate() {
+        return this.lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Timestamp lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public String getUserId() {
@@ -158,7 +169,7 @@ public class Note implements Serializable {
     }
 
     public String getText() {
-        return text==null ? "" : text;
+        return text == null ? "" : text;
     }
 
     public void setText(String text) {
@@ -218,11 +229,11 @@ public class Note implements Serializable {
         return this.pinned;
     }
 
-    public Timestamp getPinOrder() {
+    public Long getPinOrder() {
         return this.pinOrder;
     }
 
-    public void setPinOrder(Timestamp pinOrder) {
+    public void setPinOrder(Long pinOrder) {
         this.pinOrder = pinOrder;
     }
 

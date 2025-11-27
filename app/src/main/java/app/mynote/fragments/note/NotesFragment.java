@@ -111,7 +111,7 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
                             public void onClick(int position) {
                                 Note noteItem = notesAdapter.notesList.get(position);
                                 noteItem.setPinned(!noteItem.isPinned());
-                                noteItem.setPinOrder(AppTimestamp.convertStringToTimestamp(AppDate.Now()));
+                                noteItem.setPinOrder(System.currentTimeMillis());
                                 NoteService.update(getContext(), noteItem, false);
                                 String textMsg = noteItem.isPinned() ? "Pinned" : "Un Pinned";
                                 Toast.makeText(getContext(), "Note " + textMsg, Toast.LENGTH_LONG).show();

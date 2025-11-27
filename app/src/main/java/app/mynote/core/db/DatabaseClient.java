@@ -71,11 +71,12 @@ public final class DatabaseClient extends SQLiteOpenHelper {
                 NoteContract.Notes.COL_PINNED + "] TINYINT,[" +
                 NoteContract.Notes.COL_ACTIVE + "] TINYINT NOT NULL ON CONFLICT REPLACE DEFAULT 1 ,[" +
                 NoteContract.Notes.COL_SPELL_CHECK + "] TINYINT,[" +
-                NoteContract.Notes.COL_PIN_ORDER + "] TEXT,[" +
+                NoteContract.Notes.COL_PIN_ORDER + "] INTEGER,[" +
                 NoteContract.Notes.COL_DATE_CREATED + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_MODIFIED + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_ARCHIVED + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_DELETED + "] TEXT,[" +
+                NoteContract.Notes.COL_LAST_MODIFIED_DATE + "] TEXT,[" +
                 NoteContract.Notes.COL_DATE_SYNC + "] TEXT,[" +
                 NoteContract.Notes.COL_SYNCED + "] TINYINT,[" +
                 NoteContract.Notes.COL_OWNER + "] TEXT);");

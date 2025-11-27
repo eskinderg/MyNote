@@ -27,11 +27,12 @@ public class NoteService {
         values.put(NoteContract.Notes.COL_COLOUR, note.getColour());
         values.put(NoteContract.Notes.COL_ACTIVE, note.isActive());
         values.put(NoteContract.Notes.COL_SPELL_CHECK, note.getSpellCheck());
-        values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder().toString());
+        values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder());
         values.put(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString());
         values.put(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString());
         values.put(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString());
         values.put(NoteContract.Notes.COL_DATE_DELETED, note.getDateDeleted().toString());
+        values.put(NoteContract.Notes.COL_LAST_MODIFIED_DATE, note.getLastModifiedDate().toString());
         values.put(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync());
         values.put(NoteContract.Notes.COL_SYNCED, note.getIsSync());
         values.put(NoteContract.Notes.COL_OWNER, note.getOwner());
@@ -50,7 +51,7 @@ public class NoteService {
         values.put(NoteContract.Notes.COL_COLOUR, note.getColour());
         values.put(NoteContract.Notes.COL_ACTIVE, note.isActive());
         values.put(NoteContract.Notes.COL_SPELL_CHECK, note.getSpellCheck());
-        values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder().toString());
+        values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder());
         values.put(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString());
         if(markModified){
             values.put(NoteContract.Notes.COL_DATE_MODIFIED, AppDate.Now());
@@ -60,6 +61,7 @@ public class NoteService {
         }
         values.put(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString());
         values.put(NoteContract.Notes.COL_DATE_DELETED, note.getDateDeleted().toString());
+        values.put(NoteContract.Notes.COL_LAST_MODIFIED_DATE, note.getLastModifiedDate().toString());
         values.put(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync());
         values.put(NoteContract.Notes.COL_OWNER, note.getOwner());
         c.getContentResolver().update(NoteContract.Notes.CONTENT_URI, values, NoteContract.Notes.COL_ID + " = ?",
@@ -98,10 +100,11 @@ public class NoteService {
         note.setActive(c.getInt(c.getColumnIndexOrThrow(NoteContract.Notes.COL_ACTIVE)) > 0);
         note.setFavorite(c.getInt(c.getColumnIndexOrThrow(NoteContract.Notes.COL_FAVORITE)) > 0);
         note.setSpellCheck(c.getInt(c.getColumnIndexOrThrow(NoteContract.Notes.COL_SPELL_CHECK)) > 0);
-        note.setPinOrder(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_PIN_ORDER))));
+        note.setPinOrder(c.getLong(c.getColumnIndexOrThrow(NoteContract.Notes.COL_PIN_ORDER)));
         note.setDateCreated(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_CREATED))));
         note.setDateModified(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_MODIFIED))));
         note.setDateArchived(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_ARCHIVED))));
+        note.setLastModifiedDate(AppTimestamp.convertStringToTimestamp(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_LAST_MODIFIED_DATE))));
         note.setDateDeleted( Optional.ofNullable(c.getString(c.getColumnIndexOrThrow(NoteContract.Notes.COL_DATE_DELETED)))
                         .map(AppTimestamp::convertStringToTimestamp)
                         .orElse(null)
@@ -135,11 +138,12 @@ public class NoteService {
             values.put(NoteContract.Notes.COL_COLOUR, note.getColour());
             values.put(NoteContract.Notes.COL_ACTIVE, note.isActive());
             values.put(NoteContract.Notes.COL_SPELL_CHECK, note.getSpellCheck());
-            values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder().toString());
+            values.put(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder());
             values.put(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString());
             values.put(NoteContract.Notes.COL_DATE_MODIFIED, note.getDateModified().toString());
             values.put(NoteContract.Notes.COL_DATE_ARCHIVED, note.getDateArchived().toString());
             values.put(NoteContract.Notes.COL_DATE_DELETED, note.getDateDeleted().toString());
+            values.put(NoteContract.Notes.COL_LAST_MODIFIED_DATE, note.getLastModifiedDate().toString());
             values.put(NoteContract.Notes.COL_DATE_SYNC, note.getDateSync());
             values.put(NoteContract.Notes.COL_SYNCED, note.getIsSync());
             values.put(NoteContract.Notes.COL_OWNER, note.getOwner());
