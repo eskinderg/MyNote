@@ -10,4 +10,8 @@
         android:id="@+id/action_archive"
         android:icon="@drawable/ic_archive"
         android:title="@string/note_menu_archive" />
+    <item
+        android:id="@+id/action_unlock"
+        android:icon="@drawable/ic_lock_24"
+        android:title="@string/note_menu_unlock" />
 </menu>

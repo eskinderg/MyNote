@@ -26,7 +26,6 @@ public class Note implements Serializable {
     @Expose
     private String colour;
 
-
     @SerializedName("selection")
     @Expose
     private String selection;
@@ -46,6 +45,10 @@ public class Note implements Serializable {
     @SerializedName("active")
     @Expose
     private boolean active = true;
+
+    @SerializedName("readonly")
+    @Expose
+    private boolean readonly = false;
 
     @SerializedName("spell_check")
     @Expose
@@ -255,6 +258,14 @@ public class Note implements Serializable {
 
     public boolean getActive() {
         return this.active;
+    }
+
+    public boolean getReadonly() {
+        return this.readonly;
+    }
+
+    public void setReadonly(boolean value) {
+        this.readonly = value;
     }
 
     public boolean isActive() {

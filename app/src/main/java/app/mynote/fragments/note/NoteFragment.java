@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,24 +75,33 @@ public class NoteFragment extends Fragment implements IAppCallback<Note>, MenuPr
 //            NoteFragment.this.webView.loadDataWithBaseURL(null, note.getText(), "text/html", "UTF-8", null);
 
         String html = "";
-        if(note.getText() != null) {
+        if (note.getText() != null) {
             html = note.getText();
         }
-        String htmlEditor = "<html><body contenteditable='true' style='padding:0px 5px 0px 5px;'>" +
-                html +
-                "</body></html>";
+        String htmlEditor;
+        if (!note.getReadonly()) {
+            htmlEditor = "<html><body contenteditable='true' style='padding:0px 5px 0px 5px;'>" +
+                    html +
+                    "</body></html>";
+        } else {
+            htmlEditor = "<html><body contenteditable='false' style='padding:0px 5px 0px 5px;'>" +
+                    html +
+                    "</body></html>";
+        }
         NoteFragment.this.webView.getSettings().setJavaScriptEnabled(true);
         NoteFragment.this.webView.loadDataWithBaseURL(null, htmlEditor, "text/html", "UTF-8", null);
 
-        this.txtNoteHeader.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteHeader) {
-            @Override
-            public void onTextChanged(EditText target, Editable s) {
-                String header = txtNoteHeader.getText().toString().isEmpty() ? "" : txtNoteHeader.getText().toString();
-                note.setHeader(header);
-                NoteService.update(getContext(),note, true);
+        if(!this.note.getReadonly()) {
+            this.txtNoteHeader.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteHeader) {
+                @Override
+                public void onTextChanged(EditText target, Editable s) {
+                    String header = txtNoteHeader.getText().toString().isEmpty() ? "" : txtNoteHeader.getText().toString();
+                    note.setHeader(header);
+                    NoteService.update(getContext(), note, true);
 
-            }
-        });
+                }
+            });
+        }
 
 //        this.txtNoteText.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteText) {
 //            @Override
@@ -108,6 +118,19 @@ public class NoteFragment extends Fragment implements IAppCallback<Note>, MenuPr
             }
         });
 
+        if(this.note.getReadonly()){
+            txtNoteHeader.setFocusable(false);
+            txtNoteHeader.setFocusableInTouchMode(false);
+            txtNoteHeader.setCursorVisible(false);
+            txtNoteHeader.setInputType(InputType.TYPE_NULL);
+            txtNoteHeader.setTextIsSelectable(true);
+
+            webView.setFocusable(false);
+            webView.setFocusableInTouchMode(false);
+            webView.setClickable(false);
+            webView.setLongClickable(false);
+            webView.setEnabled(false);
+        }
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(this.note.getHeader());
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
@@ -173,6 +196,21 @@ public class NoteFragment extends Fragment implements IAppCallback<Note>, MenuPr
     public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
         menuInflater.inflate(R.menu.note, menu);
     }
+
+    @Override
+    public void onPrepareMenu(Menu menu) {
+        MenuItem archiveItem = menu.findItem(R.id.action_archive);
+        MenuItem unlockItem = menu.findItem(R.id.action_unlock);
+
+        if (note.getReadonly()) {
+            archiveItem.setVisible(true);
+            unlockItem.setVisible(true);
+        } else {
+            archiveItem.setVisible(true);
+            unlockItem.setVisible(false);
+        }
+    }
+
     private void saveHtmlThen(Runnable afterSave) {
         webView.evaluateJavascript(
                 "(function() { return document.body.innerHTML; })();",
@@ -218,6 +256,64 @@ public class NoteFragment extends Fragment implements IAppCallback<Note>, MenuPr
                 NoteService.update(getContext(), note, false);
                 NavController navController = NavHostFragment.findNavController(this);
                 navController.navigate(R.id.action_nav_note_to_nav_notes);
+            });
+            return true;
+        }
+
+        if(menuItem.getItemId() == R.id.action_unlock){
+            saveHtmlThen(()->{
+                this.note.setReadonly(false);
+                NoteService.update(getContext(), note, false);
+                NavController navController = NavHostFragment.findNavController(this);
+
+                txtNoteHeader.setFocusable(true);
+                txtNoteHeader.setFocusableInTouchMode(true);
+                txtNoteHeader.setCursorVisible(true);
+                txtNoteHeader.setInputType(InputType.TYPE_CLASS_TEXT);
+                txtNoteHeader.setTextIsSelectable(true);
+
+                webView.setFocusable(true);
+                webView.setFocusableInTouchMode(true);
+                webView.setClickable(true);
+                webView.setLongClickable(true);
+                webView.setEnabled(true);
+
+                this.txtNoteHeader.addTextChangedListener(new EditTextChangedListener<EditText>(txtNoteHeader) {
+                    @Override
+                    public void onTextChanged(EditText target, Editable s) {
+                        String header = txtNoteHeader.getText().toString().isEmpty() ? "" : txtNoteHeader.getText().toString();
+                        note.setHeader(header);
+                        NoteService.update(getContext(), note, true);
+
+                    }
+                });
+
+                String html = "";
+                if (note.getText() != null) {
+                    html = note.getText();
+                }
+
+                String htmlEditor;
+                if (!note.getReadonly()) {
+                    htmlEditor = "<html><body contenteditable='true' style='padding:0px 5px 0px 5px;'>" +
+                            html +
+                            "</body></html>";
+                } else {
+                    htmlEditor = "<html><body contenteditable='false' style='padding:0px 5px 0px 5px;'>" +
+                            html +
+                            "</body></html>";
+                }
+
+                NoteFragment.this.webView.getSettings().setJavaScriptEnabled(true);
+                NoteFragment.this.webView.loadDataWithBaseURL(null, htmlEditor, "text/html", "UTF-8", null);
+
+                webView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        htmlSyncHandler.post(syncNoteRunnable);
+                    }
+                });
+//                navController.navigate(R.id.action_nav_notes_to_nav_note);
             });
             return true;
         }

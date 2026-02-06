@@ -70,6 +70,7 @@ public final class DatabaseClient extends SQLiteOpenHelper {
                 NoteContract.Notes.COL_FAVORITE + "] TINYINT,[" +
                 NoteContract.Notes.COL_PINNED + "] TINYINT,[" +
                 NoteContract.Notes.COL_ACTIVE + "] TINYINT NOT NULL ON CONFLICT REPLACE DEFAULT 1 ,[" +
+                NoteContract.Notes.COL_READONLY + "] TINYINT,[" +
                 NoteContract.Notes.COL_SPELL_CHECK + "] TINYINT,[" +
                 NoteContract.Notes.COL_PIN_ORDER + "] INTEGER,[" +
                 NoteContract.Notes.COL_DATE_CREATED + "] TEXT,[" +

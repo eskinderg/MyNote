@@ -137,6 +137,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
                         archives(localEntries, batch, noteLocal, found);
                         pinOrder(localEntries, batch, noteLocal, found);
+                        lastModifiedDate(localEntries, batch, noteLocal, found);
                         deleted(localEntries, batch, noteLocal, found);
 
                         if (!(found == null)) {
@@ -147,6 +148,9 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
 
                             } else if (des < 0) {
                                 Log.i(TAG, found.getHeader() + ": New update found and Need to be sent to the server");
+                                localEntries.put(noteLocal.getId() + noteLocal.getUserId(), noteLocal);
+                            }else if (!noteLocal.getIsSync()){
+                                Log.i(TAG, found.getHeader() + ": New update found (unsynced note) and Need to be sent to the server");
                                 localEntries.put(noteLocal.getId() + noteLocal.getUserId(), noteLocal);
                             } else {
 //                                Log.w("Eskinder", found.getHeader() + "=0");
@@ -218,6 +222,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                                     .withValue(NoteContract.Notes.COL_ARCHIVED, note.getArchived())
                                     .withValue(NoteContract.Notes.COL_PINNED, note.getPinned())
                                     .withValue(NoteContract.Notes.COL_ACTIVE, note.getActive())
+                                    .withValue(NoteContract.Notes.COL_READONLY, note.getReadonly())
                                     .withValue(NoteContract.Notes.COL_SPELL_CHECK, note.getSpellCheck())
                                     .withValue(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder())
                                     .withValue(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString())
@@ -285,6 +290,29 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.e(TAG, "Error on sync operation " + throwable.getMessage());
             }
         });
+    }
+
+    private void lastModifiedDate(Map<String, Note> localEntries, ArrayList<ContentProviderOperation> batch, Note localNote, Note remoteNote) {
+        if (remoteNote != null) {
+            if (localNote.getLastModifiedDate() != null && remoteNote.getLastModifiedDate() != null) {
+                int comp = localNote.getLastModifiedDate().compareTo(remoteNote.getLastModifiedDate());
+
+                if (comp < 0){
+                    addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+                }
+
+                if (comp > 0)
+                    localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
+            }
+
+            if (localNote.getLastModifiedDate() != null && remoteNote.getLastModifiedDate() == null)
+                localEntries.put(localNote.getId() + localNote.getUserId(), localNote);
+
+
+            if (localNote.getLastModifiedDate() == null && remoteNote.getLastModifiedDate() != null) {
+                addOperation(batch, ContentProviderOperation.newUpdate(NoteContract.Notes.CONTENT_URI), remoteNote);
+            }
+        }
     }
 
     private void archives(Map<String, Note> localEntries, ArrayList<ContentProviderOperation> batch, Note localNote, Note remoteNote) {
@@ -367,6 +395,7 @@ public class NoteSyncAdapter extends AbstractThreadedSyncAdapter {
                 .withValue(NoteContract.Notes.COL_ARCHIVED, note.getArchived())
                 .withValue(NoteContract.Notes.COL_PINNED, note.getPinned())
                 .withValue(NoteContract.Notes.COL_ACTIVE, note.getActive())
+                .withValue(NoteContract.Notes.COL_READONLY, note.getReadonly())
                 .withValue(NoteContract.Notes.COL_SPELL_CHECK, note.getSpellCheck())
                 .withValue(NoteContract.Notes.COL_PIN_ORDER, note.getPinOrder())
                 .withValue(NoteContract.Notes.COL_DATE_CREATED, note.getDateCreated().toString())

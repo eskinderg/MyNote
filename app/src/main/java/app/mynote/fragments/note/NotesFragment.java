@@ -137,6 +137,24 @@ public class NotesFragment extends Fragment implements OnNoteItemClickListener, 
                             }
                         }
                 ));
+                underlayButtons.add(new SwipeController.UnderlayButton(
+                        "Unlock",
+                        SwipeController.getBitmapFromVectorDrawable(getContext(), R.drawable.ic_lock_24),
+                        ContextCompat.getColor(getContext(), R.color.primary_light),
+                        0,
+                        true,
+                        new SwipeController.UnderlayButtonClickListener() {
+                            @Override
+                            public void onClick(int position) {
+                                Note noteItem = notesAdapter.notesList.get(position);
+                                noteItem.setReadonly(!noteItem.getReadonly());
+                                NoteService.update(getContext(), noteItem, false);
+                                String textMsg = noteItem.getReadonly() ? "Locked" : "UnLocked";
+                                Toast.makeText(getContext(), "Note " + textMsg, Toast.LENGTH_LONG).show();
+                                notesAdapter.notifyItemChanged(position);
+                            }
+                        }
+                ));
 
             }
         };

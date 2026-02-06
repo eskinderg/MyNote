@@ -24,6 +24,7 @@ public final class NoteContract {
         public static final String COL_FAVORITE = "favorite";
         public static final String COL_PINNED = "pinned";
         public static final String COL_ACTIVE = "active";
+        public static final String COL_READONLY = "readonly";
         public static final String COL_SPELL_CHECK = "spell_check";
         public static final String COL_PIN_ORDER = "pin_order";
         public static final String COL_DATE_CREATED = "date_created";
@@ -54,6 +55,7 @@ public final class NoteContract {
             Notes.COL_ARCHIVED,
             Notes.COL_PINNED,
             Notes.COL_ACTIVE,
+            Notes.COL_READONLY,
             Notes.COL_SPELL_CHECK,
             Notes.COL_PIN_ORDER,
             Notes.COL_DATE_CREATED,

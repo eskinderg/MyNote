@@ -71,6 +71,10 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
             holder.imgPinned.setVisibility(View.VISIBLE);
         }
 
+        if (noteItem.getReadonly()) {
+            holder.imgReadonly.setVisibility(View.VISIBLE);
+        }
+
         if (noteItem.getHeader() == null || noteItem.getHeader().isEmpty()) {
             holder.header.setText("Untitled");
             holder.header.setTextColor(Color.GRAY);
@@ -157,6 +161,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
         TextView header;
         TextView description;
         ImageView imgPinned;
+        ImageView imgReadonly;
         ImageView sync;
         CardView card;
 
@@ -166,6 +171,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteRecycler
             description = itemView.findViewById(R.id.description);
             card = itemView.findViewById(R.id.card);
             imgPinned = itemView.findViewById(R.id.imgPinned);
+            imgReadonly = itemView.findViewById(R.id.imgReadonly);
             sync = itemView.findViewById(R.id.sync);
         }
     }

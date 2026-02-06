@@ -15,5 +15,6 @@
     <string name="menu_note">note</string>
     <string name="save">Save</string>
     <string name="note_menu_archive">Archive</string>
+    <string name="note_menu_unlock">Unlock</string>
     <string name="menu_settings">Settings</string>
 </resources>

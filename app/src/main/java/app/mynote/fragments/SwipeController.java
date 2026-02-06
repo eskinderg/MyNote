@@ -208,7 +208,8 @@ public abstract class SwipeController extends ItemTouchHelper.SimpleCallback {
                             itemView.getBottom()
                     ),
                     pos,
-                    button.pinFlag
+                    button.pinFlag,
+                    button.readOnlyFlag
             );
 
             right = left;
@@ -234,6 +235,7 @@ public abstract class SwipeController extends ItemTouchHelper.SimpleCallback {
         private int pos;
         private RectF clickRegion;
         private boolean pinFlag;
+        private boolean readOnlyFlag;
 
         public UnderlayButton(String text, Bitmap bitmap, int color, UnderlayButtonClickListener clickListener) {
             this.text = text;
@@ -250,6 +252,14 @@ public abstract class SwipeController extends ItemTouchHelper.SimpleCallback {
             this.clickListener = clickListener;
         }
 
+        public UnderlayButton(String text, Bitmap bitmap, int color,int readonly, boolean readOnlyFlag, UnderlayButtonClickListener clickListener) {
+            this.text = text;
+            this.bitmap = bitmap;
+            this.color = color;
+            this.readOnlyFlag = readOnlyFlag;
+            this.clickListener = clickListener;
+        }
+
         public boolean onClick(float x, float y) {
             if (clickRegion != null && clickRegion.contains(x, y)) {
                 clickListener.onClick(pos);
@@ -259,7 +269,7 @@ public abstract class SwipeController extends ItemTouchHelper.SimpleCallback {
             return false;
         }
 
-        public void onDraw(Canvas c, RectF rect, int pos, boolean pinFlag) {
+        public void onDraw(Canvas c, RectF rect, int pos, boolean pinFlag, boolean readOnlyFlag) {
             Paint p = new Paint();
 
             // Draw background
@@ -280,6 +290,17 @@ public abstract class SwipeController extends ItemTouchHelper.SimpleCallback {
                     color = ContextCompat.getColor(MyNote.getContext(), R.color.primary_light);
                     text = "Pin";
                 }
+            }
+
+            if (readOnlyFlag) {
+                NotesAdapter adapter = (NotesAdapter) recyclerView.getAdapter();
+                if (adapter.notesList.get(pos).getReadonly()) {
+                    color = ContextCompat.getColor(MyNote.getContext(), R.color.primary);
+                    text = "Unlock";
+                } else {
+                    color = ContextCompat.getColor(MyNote.getContext(), R.color.primary_light);
+                    text = "Lock";
+            }
             }
 
 
