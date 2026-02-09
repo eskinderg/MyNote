@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.0"
 biometric = "1.1.0"
-converterGson = "2.9.0"
+converterGson = "2.11.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
